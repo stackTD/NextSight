@@ -106,6 +106,34 @@ PERFORMANCE_LOG_INTERVAL = 30  # Log performance every 30 seconds
 HAND_MODEL_PATH = MODELS_DIR / "hand_detection.tflite"
 JAR_MODEL_PATH = MODELS_DIR / "jar_classifier.h5"
 
+# Phase 3: Gesture Recognition Settings
+GESTURE_RECOGNITION_ENABLED = True
+GESTURE_CONFIDENCE_THRESHOLD = 0.8  # High accuracy requirement
+GESTURE_HOLD_TIME = 0.5  # Minimum seconds to hold gesture
+GESTURE_COOLDOWN_TIME = 2.0  # Cooldown between same gesture detections
+GESTURE_FRAME_AVERAGING = 5  # Frames to average for stability
+MAX_SIMULTANEOUS_GESTURES = 2  # One per hand
+GESTURE_MESSAGE_DURATION = 3.0  # Message display time in seconds
+GESTURE_ANIMATION_DURATION = 0.5  # Fade in/out time in seconds
+
+# Gesture message configuration
+GESTURE_MESSAGES = {
+    'peace': {'text': 'Peace & Harmony! ✌️', 'color': (212, 120, 0)},      # Blue #0078d4 (BGR)
+    'thumbs_up': {'text': 'Great Job! 👍', 'color': (16, 124, 16)},        # Green #107c10 (BGR)
+    'thumbs_down': {'text': 'Not Good! 👎', 'color': (35, 17, 232)},       # Red #e81123 (BGR)
+    'ok': {'text': 'Perfect! 👌', 'color': (0, 185, 255)},                # Gold #ffb900 (BGR)
+    'stop': {'text': 'Detection Paused ⏸️', 'color': (0, 140, 255)}       # Orange #ff8c00 (BGR)
+}
+
+# Gesture detection thresholds and parameters
+GESTURE_DETECTION_PARAMS = {
+    'peace': {'tip_distance_threshold': 0.08, 'angle_threshold': 15.0},
+    'thumbs_up': {'thumb_angle_threshold': 45.0, 'finger_curl_threshold': 0.7},
+    'thumbs_down': {'thumb_angle_threshold': 45.0, 'finger_curl_threshold': 0.7},
+    'ok': {'circle_distance_threshold': 0.05, 'finger_extension_threshold': 0.6},
+    'stop': {'finger_extension_threshold': 0.8, 'spread_angle_threshold': 20.0}
+}
+
 # Error handling settings
 MAX_FRAME_FAILURES = 5  # Max consecutive frame read failures before restart
 CAMERA_RECONNECT_ATTEMPTS = 3

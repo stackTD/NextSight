@@ -205,7 +205,9 @@ class OverlayRenderer:
         
         controls = [
             "'q' - Quit", "'s' - Screenshot", "'h' - Toggle hands",
-            "'o' - Toggle overlay", "'f' - Fullscreen", "'r' - Reset"
+            "'o' - Toggle overlay", "'f' - Fullscreen", "'r' - Reset",
+            "'g' - Toggle gestures", "'m' - Toggle messages", 
+            "'c' - Clear history", "'t' - Sensitivity"
         ]
         
         for control in controls:
