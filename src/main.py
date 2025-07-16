@@ -20,19 +20,21 @@ from detection.gesture_recognizer import GestureRecognizer
 from ui.overlay_renderer import OverlayRenderer
 from ui.message_overlay import MessageOverlay
 from utils.performance_monitor import PerformanceMonitor
+from core.bottle_controls import BottleControls
 
 
 class NextSightApp:
-    """NextSight Phase 3 - Advanced Gesture Recognition Application."""
+    """NextSight Phase 4 - Professional Hand Detection with Bottle Inspection."""
     
     def __init__(self):
-        """Initialize NextSight Phase 3 application."""
+        """Initialize NextSight Phase 4 application."""
         self.camera_manager = None
         self.hand_detector = None
         self.gesture_recognizer = None
         self.overlay_renderer = None
         self.message_overlay = None
         self.performance_monitor = None
+        self.bottle_controls = None  # Phase 4: Bottle detection system
         self.running = False
         self.screenshot_counter = 0
         self.fullscreen = False
@@ -46,7 +48,7 @@ class NextSightApp:
         
     def initialize(self):
         """Initialize all application components."""
-        logger.info("Initializing NextSight Phase 3 components...")
+        logger.info("Initializing NextSight Phase 4 components...")
         
         # Initialize camera manager
         self.camera_manager = CameraManager()
@@ -68,27 +70,33 @@ class NextSightApp:
         # Initialize performance monitor
         self.performance_monitor = PerformanceMonitor()
         
+        # Phase 4: Initialize bottle detection system
+        self.bottle_controls = BottleControls()
+        bottle_init_success = self.bottle_controls.initialize()
+        
         # Test camera functionality
         test_frame = self.camera_manager.get_frame()
         if test_frame is None:
             raise RuntimeError("Camera test failed - no frame received")
         
-        logger.info("All Phase 3 components initialized successfully")
+        logger.info("All Phase 4 components initialized successfully")
         logger.info("Camera test passed - frame received")
         logger.info("Hand detection system ready")
         logger.info("Gesture recognition system ready")
         logger.info("Interactive message system ready")
+        logger.info(f"Bottle detection system ready: {bottle_init_success}")
         
     def run(self):
         """Run the main application loop with hand detection."""
         self.running = True
         last_perf_log = time.time()
         
-        logger.info("Starting NextSight Phase 3 main application loop...")
+        logger.info("Starting NextSight Phase 4 main application loop...")
         logger.info("Controls: 'q'=quit, 's'=screenshot, 'h'=toggle hands, " +
                    "'o'=overlay modes, 'f'=fullscreen, 'r'=reset")
         logger.info("Gesture Controls: 'g'=toggle gestures, 'm'=toggle messages, " +
                    "'c'=clear history, 't'=adjust sensitivity")
+        logger.info("Bottle Controls: 'b'=toggle bottle detection, 'i'=toggle inspection overlay")
         
         try:
             while self.running:
@@ -105,6 +113,9 @@ class NextSightApp:
                     # Gesture recognition processing
                     detection_results = self._process_gesture_recognition(detection_results)
                     
+                    # Phase 4: Bottle detection processing
+                    bottle_results, bottle_stats = self._process_bottle_detection(frame)
+                    
                     # Get performance stats
                     performance_stats = self.performance_monitor.get_system_stats()
                     
@@ -115,6 +126,9 @@ class NextSightApp:
                     
                     # Render gesture messages
                     frame = self._render_gesture_messages(frame, detection_results)
+                    
+                    # Phase 4: Render bottle detection UI
+                    frame = self._render_bottle_detection_ui(frame, bottle_results, bottle_stats)
                     
                     # Display frame
                     if self.fullscreen:
@@ -140,6 +154,7 @@ class NextSightApp:
                     self.performance_monitor.log_stats()
                     self._log_hand_detection_stats(detection_results)
                     self._log_gesture_stats(detection_results)
+                    self._log_bottle_detection_stats(bottle_results, bottle_stats)
                     last_perf_log = time.time()
                     
         except KeyboardInterrupt:
@@ -181,6 +196,20 @@ class NextSightApp:
                 'cooldown_status': {'Left': {}, 'Right': {}}
             }
             return detection_results
+    
+    def _process_bottle_detection(self, frame):
+        """Process bottle detection on the current frame."""
+        if self.bottle_controls:
+            return self.bottle_controls.process_bottle_detection(frame)
+        else:
+            return None, None
+    
+    def _render_bottle_detection_ui(self, frame, bottle_results, bottle_stats):
+        """Render bottle detection UI overlays."""
+        if self.bottle_controls and bottle_results and bottle_stats:
+            return self.bottle_controls.render_bottle_ui(frame, bottle_results, bottle_stats)
+        else:
+            return frame
     
     def _render_gesture_messages(self, frame, detection_results):
         """Render gesture messages and status overlays."""
@@ -228,6 +257,9 @@ class NextSightApp:
             self._clear_gesture_history()
         elif key == ord('t'):
             self._cycle_sensitivity()
+        # Phase 4 Bottle Controls
+        elif self.bottle_controls and self.bottle_controls.handle_keyboard_input(key, frame):
+            pass  # Bottle controls handled the key
         
         return True
     
@@ -350,6 +382,23 @@ class NextSightApp:
                        f"Avg Confidence: {stats['average_confidence']:.2f}, "
                        f"Rate: {stats.get('gestures_per_minute', 0):.1f}/min")
     
+    def _log_bottle_detection_stats(self, bottle_results, bottle_stats):
+        """Log bottle detection statistics."""
+        if not bottle_results or not bottle_stats:
+            return
+        
+        if bottle_results.total_bottles > 0:
+            logger.info(f"Bottle Detection - Total: {bottle_results.total_bottles}, "
+                       f"OK: {bottle_results.ok_count}, NG: {bottle_results.ng_count}, "
+                       f"Avg Confidence: {bottle_results.average_confidence:.2f}, "
+                       f"Processing: {bottle_results.processing_time*1000:.1f}ms")
+        
+        # Log session stats periodically
+        if bottle_stats.get('total_detections', 0) > 0:
+            logger.info(f"Bottle Session - Total: {bottle_stats['total_detections']}, "
+                       f"OK Rate: {bottle_stats.get('ok_rate', 0):.1%}, "
+                       f"Rate: {bottle_stats.get('detections_per_minute', 0):.1f}/min")
+    
     def _take_screenshot(self, frame):
         """Take a screenshot with full UI and hand overlays."""
         if frame is not None:
@@ -374,9 +423,13 @@ class NextSightApp:
     
     def shutdown(self):
         """Shutdown application and cleanup resources."""
-        logger.info("Shutting down NextSight Phase 3 application...")
+        logger.info("Shutting down NextSight Phase 4 application...")
         
         self.running = False
+        
+        # Cleanup bottle controls (Phase 4)
+        if self.bottle_controls:
+            self.bottle_controls.cleanup()
         
         # Cleanup gesture recognizer
         if self.gesture_recognizer:
@@ -401,10 +454,17 @@ class NextSightApp:
             logger.info(f"Final gesture statistics - Total: {stats['total_gestures']}, "
                        f"Avg Confidence: {stats['average_confidence']:.2f}")
         
+        # Log final bottle detection statistics
+        if self.bottle_controls:
+            bottle_stats = self.bottle_controls.get_detection_stats()
+            if bottle_stats:
+                logger.info(f"Final bottle statistics - Total: {bottle_stats['total_detections']}, "
+                           f"OK: {bottle_stats['ok_detections']}, NG: {bottle_stats['ng_detections']}")
+        
         # Close OpenCV windows
         cv2.destroyAllWindows()
         
-        logger.info("NextSight Phase 3 application shutdown complete")
+        logger.info("NextSight Phase 4 application shutdown complete")
 
 
 def setup_logging():
@@ -417,7 +477,7 @@ def setup_logging():
 def main():
     """Main application entry point."""
     setup_logging()
-    logger.info("Starting NextSight Phase 3 - Advanced Gesture Recognition...")
+    logger.info("Starting NextSight Phase 4 - Advanced Gesture Recognition with Bottle Detection...")
     
     app = NextSightApp()
     
