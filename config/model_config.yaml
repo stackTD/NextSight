@@ -1,0 +1,56 @@
+# NextSight Model Configuration
+
+# Hand Detection Configuration
+hand_detection:
+  model_path: "models/hand_detection.tflite"
+  confidence_threshold: 0.7
+  tracking_confidence: 0.5
+  max_hands: 2
+  landmark_smoothing: true
+
+# Object Detection Configuration
+object_detection:
+  model_path: "models/jar_classifier.h5"
+  confidence_threshold: 0.6
+  input_size: [224, 224]
+  classes:
+    - "jar_with_lid"
+    - "jar_without_lid"
+  classification_threshold: 0.8
+
+# Camera Configuration
+camera:
+  device_id: 0
+  width: 1280
+  height: 720
+  fps: 30
+  auto_exposure: true
+  brightness: 0
+  contrast: 0
+
+# Performance Configuration
+performance:
+  use_gpu: true
+  gpu_memory_growth: true
+  max_frame_buffer: 5
+  processing_threads: 2
+
+# Display Configuration
+display:
+  window_width: 1280
+  window_height: 720
+  show_fps: true
+  overlay_alpha: 0.7
+  colors:
+    hand_landmarks: [0, 255, 0]
+    object_bbox: [255, 0, 0]
+    text: [255, 255, 255]
+    background: [0, 0, 0]
+
+# Logging Configuration
+logging:
+  level: "INFO"
+  format: "{time:YYYY-MM-DD HH:mm:ss} | {level} | {message}"
+  file: "nextsight.log"
+  max_size: "10 MB"
+  rotation: "7 days"
