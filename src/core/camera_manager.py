@@ -230,6 +230,18 @@ class CameraManager:
             
         logger.info("Camera stopped and resources released")
     
+    def get_frame_for_detection(self):
+        """Get frame optimized for hand detection processing."""
+        frame = self.get_frame()
+        if frame is None:
+            return None
+        
+        # Apply preprocessing for optimal hand detection
+        # MediaPipe works best with RGB, but we'll convert in the detector
+        # Here we can add any camera-specific preprocessing
+        
+        return frame
+    
     def get_camera_info(self):
         """Get camera information."""
         return self.camera_info.copy()

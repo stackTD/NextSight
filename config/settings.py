@@ -51,9 +51,50 @@ WINDOW_HEIGHT = 720
 DISPLAY_FPS = True
 OVERLAY_ALPHA = 0.7
 MIRROR_DISPLAY = True  # Better demo experience
-WINDOW_NAME = "NextSight"
+WINDOW_NAME = "NextSight - Professional Hand Detection"
 TARGET_FPS = 30
 MAX_LATENCY_MS = 50  # Target latency camera to display
+
+# Professional UI settings for Phase 2
+UI_THEME = {
+    'background': (30, 30, 30),        # Dark background #1e1e1e
+    'accent': (212, 120, 0),           # Accent blue #0078d4 (BGR)
+    'success': (16, 124, 16),          # Success green #107c10 (BGR)
+    'warning': (0, 165, 255),          # Warning orange
+    'error': (0, 0, 255),              # Error red
+    'text_primary': (255, 255, 255),   # White text
+    'text_secondary': (200, 200, 200), # Light gray text
+    'border': (100, 100, 100),         # Border gray
+}
+
+# UI Layout settings
+UI_LAYOUT = {
+    'title_height': 60,
+    'status_panel_width': 300,
+    'bottom_bar_height': 80,
+    'margin': 10,
+    'text_scale': 0.6,
+    'title_scale': 0.8,
+    'header_scale': 0.7,
+}
+
+# Hand landmark colors (BGR format)
+HAND_COLORS = {
+    'right_hand': (0, 255, 0),     # Green for right hand
+    'left_hand': (255, 0, 0),      # Blue for left hand  
+    'fingertips': (0, 0, 255),     # Red for fingertips
+    'connections': (255, 255, 255), # White for connections
+}
+
+# Overlay display modes
+OVERLAY_MODES = ['full', 'minimal', 'off']
+DEFAULT_OVERLAY_MODE = 'full'
+
+# Performance display settings
+SHOW_PERFORMANCE_METRICS = True
+SHOW_HAND_STATUS = True
+SHOW_FINGER_COUNT = True
+SHOW_CONFIDENCE = True
 
 # Logging settings
 LOG_LEVEL = "INFO"
